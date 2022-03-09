@@ -49,6 +49,7 @@ function createWindow() {
       nodeIntegration: true,
       // add this to keep 'remote' module avaiable. Tips: it will be removed in electron 14
       enableRemoteModule: true,
+      contextIsolation: false,
     },
   });
 
@@ -68,6 +69,10 @@ function createWindow() {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
+
+  mainWindow.on('close', () => {
+    mainWindow.webContents.send('closingWindow');
+  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {

@@ -30,6 +30,7 @@
     <el-table
       stripe
       border
+      size='mini'
       min-height=300
       :data="zsetData">
       <el-table-column
@@ -105,7 +106,7 @@ export default {
       beforeEditItem: {},
       editLineItem: {},
       loadingIcon: '',
-      pageSize: 30,
+      pageSize: 200,
       pageIndex: 0,
       searchPageSize: 1000,
       oneTimeListLength: 0,
@@ -222,6 +223,7 @@ export default {
           score: Number(list[i + 1]),
           member: list[i],
           // memberDisplay: this.$util.bufToString(list[i]),
+          uniq: Math.random(),
         });
       }
 
@@ -239,6 +241,8 @@ export default {
       this.editLineItem = row;
       this.beforeEditItem = this.$util.cloneObjWithBuff(row);
       this.editDialog = true;
+
+      this.rowUniq = row.uniq;
     },
     dumpCommand(item) {
       const lines = item ? [item] : this.zsetData;
@@ -272,16 +276,19 @@ export default {
       ).then((reply) => {
         // edit key member changed
         if (before.member && !before.member.equals(afterMember)) {
-          client.zrem(
-            key,
-            before.member
-          ).then((reply) => {
-            this.initShow();
-          });
+          client.zrem(key, before.member);
         }
 
+        // this.initShow(); // do not reinit, #786
+        const newLine = {score: afterScore, member: afterMember, uniq: Math.random()};
+        // edit line
+        if (this.rowUniq) {
+          this.$util.listSplice(this.zsetData, this.rowUniq, newLine);
+        }
+        // new line
         else {
-          this.initShow();
+          this.zsetData.push(newLine);
+          this.total++;
         }
 
         this.$message.success({
@@ -305,7 +312,9 @@ export default {
               duration: 1000,
             });
 
-            this.initShow();
+            // this.initShow(); // do not reinit, #786
+            this.$util.listSplice(this.zsetData, row.uniq);
+            this.total--;
           }
         }).catch(e => {this.$message.error(e.message);});
       }).catch(() => {});

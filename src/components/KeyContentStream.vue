@@ -8,11 +8,11 @@
         </el-form-item>
         <!-- max value -->
         <el-form-item label="Max">
-          <el-input v-model="maxId" @keyup.enter.native='initShow' type="primary" placeholder='Max ID, default +' :title='$t("message.enter_to_search")'>Max</el-input>
+          <el-input v-model="maxId" @keyup.enter.native='initShow' type="primary" placeholder='Max ID, default +' :title='$t("message.enter_to_search")' size='mini'>Max</el-input>
         </el-form-item>
         <!-- min value -->
         <el-form-item label="Min">
-          <el-input v-model="minId" @keyup.enter.native='initShow' type="primary" placeholder='Min ID, default -' :title='$t("message.enter_to_search")'>Min</el-input>
+          <el-input v-model="minId" @keyup.enter.native='initShow' type="primary" placeholder='Min ID, default -' :title='$t("message.enter_to_search")' size='mini'>Min</el-input>
         </el-form-item>
       </el-form>
 
@@ -39,6 +39,7 @@
     <el-table
       stripe
       border
+      size='mini'
       min-height=300
       :data="lineData">
       <el-table-column
@@ -102,7 +103,7 @@ export default {
       beforeEditItem: {},
       editLineItem: {},
       loadingIcon: '',
-      pageSize: 30,
+      pageSize: 200,
       loadMoreDisable: false,
       minId: '-',
       maxId: '+',
@@ -139,7 +140,7 @@ export default {
 
         for (let stream of reply) {
           let content = {};
-          let line = {id: stream[0], content: content};
+          let line = {id: stream[0], content: content, uniq: Math.random()};
           // add key value map
           for (var i = 0; i < stream[1].length; i+=2) {
             content[this.$util.bufToString(stream[1][i])] =
@@ -255,7 +256,9 @@ export default {
               duration: 1000,
             });
 
-            this.initShow();
+            // this.initShow(); // do not reinit, #786
+            this.$util.listSplice(this.lineData, row.uniq);
+            this.total--;
           }
         });
       }).catch(() => {});

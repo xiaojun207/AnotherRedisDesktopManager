@@ -1,6 +1,6 @@
 {
   "name": "another-redis-desktop-manager",
-  "version": "1.5.1",
+  "version": "1.5.4",
   "description": "A faster, better and more stable redis desktop manager.",
   "author": "Another",
   "private": true,
@@ -20,7 +20,7 @@
       "output": "build-apps",
       "buildResources": "./"
     },
-    "electronVersion": "11.4.9",
+    "electronVersion": "12.2.3",
     "files": [
       "!static/js/*.map",
       "!static/css/*.map",

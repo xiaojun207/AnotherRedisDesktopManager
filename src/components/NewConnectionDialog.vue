@@ -55,6 +55,13 @@
             {{ $t('message.cluster_faq') }}
           </el-popover>
         </el-checkbox>
+        <el-checkbox v-model="connection.connectionReadOnly">
+          Readonly
+          <el-popover trigger="hover">
+            <i slot="reference" class="el-icon-question"></i>
+            {{ $t('message.connection_readonly') }}
+          </el-popover>
+        </el-checkbox>
       </el-form-item>
     </el-form>
 
@@ -76,14 +83,11 @@
           </el-form-item>
 
           <el-form-item :label="$t('message.private_key')">
-            <el-tooltip effect="dark">
-              <div slot="content" v-html="$t('message.private_key_faq')"></div>
-              <FileInput
-                :file.sync='connection.sshOptions.privatekey'
-                :bookmark.sync='connection.sshOptions.privatekeybookmark'
-                placeholder='SSH Private Key'>
-              </FileInput>
-            </el-tooltip>
+            <FileInput
+              :file.sync='connection.sshOptions.privatekey'
+              :bookmark.sync='connection.sshOptions.privatekeybookmark'
+              placeholder='SSH Private Key'>
+            </FileInput>
           </el-form-item>
 
           <el-form-item label="Passphrase">
@@ -195,6 +199,7 @@ export default {
         name: '',
         separator: ':',
         cluster: false,
+        connectionReadOnly: false,
         sshOptions: {
           host: '',
           port: 22,

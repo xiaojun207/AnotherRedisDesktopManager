@@ -195,7 +195,7 @@ button, input, textarea, .vjs__tree {
 }
 .right-main-container .main-tabs-container {
   overflow-y: hidden;
-  padding-top: 2px;
+  padding-top: 0px;
   padding-right: 4px;
 }
 
@@ -235,5 +235,9 @@ button, input, textarea, .vjs__tree {
 .dark-mode #drag-resize-pointer::after {
   border-left: 1px solid #b9b8b8;
   border-right: 1px solid #b9b8b8;
+}
+
+@keyframes rotate {
+  to{ transform: rotate(360deg); }
 }
 </style>

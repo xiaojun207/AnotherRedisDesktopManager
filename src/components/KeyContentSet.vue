@@ -27,6 +27,7 @@
     <el-table
       stripe
       border
+      size='mini'
       min-height=300
       :data="setData">
       <el-table-column
@@ -95,7 +96,7 @@ export default {
       beforeEditItem: {},
       editLineItem: {},
       loadingIcon: '',
-      pageSize: 30,
+      pageSize: 200,
       searchPageSize: 1000,
       oneTimeListLength: 0,
       scanStream: null,
@@ -154,6 +155,7 @@ export default {
           setData.push({
             value: i,
             // valueDisplay: this.$util.bufToString(i),
+            uniq: Math.random(),
           });
         }
 
@@ -189,6 +191,8 @@ export default {
       this.editLineItem = row;
       this.beforeEditItem = this.$util.cloneObjWithBuff(row);
       this.editDialog = true;
+
+      this.rowUniq = row.uniq;
     },
     dumpCommand(item) {
       const lines = item ? [item] : this.setData;
@@ -225,16 +229,19 @@ export default {
         if (reply === 1) {
           // edit key remove previous value
           if (before.value) {
-            client.srem(
-              key,
-              before.value
-            ).then((reply) => {
-              this.initShow();
-            });
+            client.srem(key, before.value);
           }
 
+          // this.initShow(); // do not reinit, #786
+          const newLine = {value: afterValue, uniq: Math.random()};
+          // edit line
+          if (this.rowUniq) {
+            this.$util.listSplice(this.setData, this.rowUniq, newLine);
+          }
+          // new line
           else {
-            this.initShow();
+            this.setData.push(newLine);
+            this.total++;
           }
 
           this.$message.success({
@@ -267,7 +274,9 @@ export default {
               duration: 1000,
             });
 
-            this.initShow();
+            // this.initShow(); // do not reinit, #786
+            this.$util.listSplice(this.setData, row.uniq);
+            this.total--;
           }
         }).catch(e => {this.$message.error(e.message);});
       }).catch(() => {});
